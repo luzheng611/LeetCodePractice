@@ -8,6 +8,7 @@ fun main() {
     println("InsertSort:"+ insetSort(intArrayOf(20, 23, 89, 3534, 653, 6456, 34324, 324, 2, 34, 24, 465)).contentToString())
     println("QuickSort:"+ quickSort(intArrayOf(20, 23, 89, 3534, 653,34,2432,234,54))?.contentToString())
     println("HeapSort:"+ heapSort(intArrayOf(20, 23, 89, 3534,3432,45,35,34,63,63,6,3425,54,6756,3,42,4,2,4,2, 653,34,2432,234,54)).contentToString())
+    println("BucketSort:"+ bucketSort(intArrayOf(20, 23, 89, 3534,3432,45,35,34,63,63,6,3425,54,6756,3,42,4,2,4,2, 653,34,2432,234,54)).contentToString())
 }
 
 /**
@@ -126,6 +127,9 @@ private fun swap(src: IntArray, left: Int, right: Int) {
 }
 
 
+/**
+ * Heap sort
+ */
 private fun heapSort(src: IntArray): IntArray{
     if(src.size <= 1){
         return src
@@ -155,4 +159,90 @@ fun buildMaxHeap(tempArray: IntArray, start: Int, len: Int) {
         }
     }
 }
+
+
+/**
+ * Bucket sort
+ */
+fun bucketSort(src: IntArray): IntArray{
+    if(src.size <=1){
+        return src
+    }
+    val asrArray = src.copyOf(src.size)
+
+    val bucketNum = 16
+    val bucketSize = src.size / bucketNum
+    val buckets = arrayOfNulls<Node>(bucketNum)
+    for(i in src.indices) {
+        val it = asrArray[i]
+        val index = it.rem(bucketSize)
+        var root = buckets[index]
+        var current = root
+        var pre: Node? = null
+        if(root == null){
+            root = Node(it)
+            buckets[index] = root
+        } else {
+            while (current != null) {
+                if (current.value < it) {
+                    pre = current
+                    current = current.next
+                    if (current == null) {
+                        pre.next = Node(it)
+                    }
+                } else {
+                    pre?.next = Node(it)
+                    pre?.next?.next = current
+                    current = null
+                }
+            }
+        }
+    }
+    var fillIndex = 0
+    for (i in 0 until bucketNum) {
+        var current = buckets[i]
+        while (current != null) {
+            asrArray[fillIndex++] = current.value
+            current = current.next
+        }
+    }
+    return asrArray
+}
+
+class Node(var value: Int) {
+
+    var next: Node? = null
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
