@@ -1,5 +1,6 @@
 package com.example.demo
 
+import android.graphics.fonts.Font
 import java.util.*
 
 fun main() {
@@ -12,6 +13,7 @@ fun main() {
     printlnLinkedNode(getKthFromEndRecursive(mockLinkedNode(1, 3, 5, 6, 8, 29, 42), 2))
     printlnLinkedNode(bubbleSortList(mockLinkedNode(243, 234, 32390, 343, 23, 231, 2, 4, 6)))
     printlnLinkedNode(middleNode(mockLinkedNode(243, 234, 32390, 343, 23, 231, 2, 4, 6)))
+    println(isPalindrome2(mockLinkedNode(1,2,1)))
 }
 
 class ListNode(var value: Int) {
@@ -270,7 +272,7 @@ fun middleNode(head: ListNode?): ListNode? {
 }
 
 /**
- * 判断是否是环形链表, HashMap辅助查找实现
+ * 判断是否是环形链表, HashMap辅助查找实现 O(N) O(N)
  */
 fun hasCycle(head: ListNode?): Boolean {
     head?.next ?: return false
@@ -284,6 +286,71 @@ fun hasCycle(head: ListNode?): Boolean {
         node = node.next
     }
     return false
+}
+
+/**
+ * 判断是否是环形链表, 快慢指针实现  O(N) O(1)
+ */
+fun hasCycle2(head: ListNode?): Boolean {
+    head?.next ?: return false
+    var fast = head.next
+    var slow = head
+    while (fast != slow) {
+        if (fast?.next == null) {
+            return false
+        }
+        fast = fast.next?.next
+        slow = slow?.next
+    }
+    return true
+}
+
+fun getIntersectionNode(headA: ListNode?, headB: ListNode?): ListNode? {
+    var nodeA = headA
+    var nodeB = headB
+    while (nodeB != nodeA) {
+        nodeA = if (nodeA != null) nodeA.next else headB
+        nodeB = if (nodeB != null) nodeB.next else headA
+    }
+    return nodeA
+}
+
+/**
+ * 判断是否是回文链表   先赋值到集合，然后数组两头一一对比
+ */
+fun isPalindrome(head: ListNode?): Boolean {
+    head?.next ?: return true
+    var node = head
+    val array = arrayListOf<Int>()
+    while (node != null){
+        array.add(node.value)
+        node = node.next
+    }
+    val halfSize = array.size / 2
+    for (i in 0 until halfSize) {
+        if (array[i] != array[array.lastIndex - i]) {
+            return false
+        }
+    }
+    return true
+}
+
+/**
+ * 判断是否是回文链表   递归实现，记录一个front指针，跟随递归的归路劲向后迭代并比对
+ */
+fun isPalindrome2(head: ListNode?): Boolean {
+    front = head
+    return checkPalindrome(head)
+}
+var front: ListNode? = null
+fun checkPalindrome(head: ListNode?): Boolean {
+    if (head != null) {
+        if(!checkPalindrome(head.next)) return false
+        if(front?.value != head.value) return false
+        front = front?.next
+    }
+
+    return true
 }
 
 
