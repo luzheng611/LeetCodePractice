@@ -6,14 +6,19 @@ fun main() {
     printlnLinkedNode(reverseLinkedList(mockLinkedNode(1, 2, 3, 4, 5)))
     printlnLinkedNode(deleteNode(mockLinkedNode(1, 2, 3, 4, 5, 8, 6), 8))
     println(reversePrint(mockLinkedNode(1, 3, 2, 3, 5, 345, 43, 564))?.contentToString())
-    printlnLinkedNode(mergeTwoLists(mockLinkedNode(2,4,7), mockLinkedNode(1, 3, 4)))
-    printlnLinkedNode(getKthFromEnd(mockLinkedNode(1,3,5,6,8,29,42),2))
-    printlnLinkedNode(getKthFromEndDoublePointer(mockLinkedNode(1,3,5,6,8,29,42),2))
-    printlnLinkedNode(getKthFromEndRecursive(mockLinkedNode(1,3,5,6,8,29,42),2))
+    printlnLinkedNode(mergeTwoLists(mockLinkedNode(2, 4, 7), mockLinkedNode(1, 3, 4)))
+    printlnLinkedNode(getKthFromEnd(mockLinkedNode(1, 3, 5, 6, 8, 29, 42), 2))
+    printlnLinkedNode(getKthFromEndDoublePointer(mockLinkedNode(1, 3, 5, 6, 8, 29, 42), 2))
+    printlnLinkedNode(getKthFromEndRecursive(mockLinkedNode(1, 3, 5, 6, 8, 29, 42), 2))
+    printlnLinkedNode(bubbleSortList(mockLinkedNode(243, 234, 32390, 343, 23, 231, 2, 4, 6)))
+    printlnLinkedNode(middleNode(mockLinkedNode(243, 234, 32390, 343, 23, 231, 2, 4, 6)))
 }
 
-class ListNode(val value: Int) {
+class ListNode(var value: Int) {
     var next: ListNode? = null
+    override fun toString(): String {
+        return value.toString()
+    }
 }
 
 fun mockLinkedNode(vararg args: Int): ListNode {
@@ -146,15 +151,15 @@ fun mergeTwoLists(l1: ListNode?, l2: ListNode?): ListNode? {
 fun getKthFromEnd(head: ListNode?, k: Int): ListNode? {
     head ?: return null
     val stack = Stack<ListNode>()
-    var cur : ListNode? = head
+    var cur: ListNode? = head
     while (cur != null) {
         stack.push(cur)
         cur = cur.next
     }
-    if(stack.size < k){
+    if (stack.size < k) {
         return null
     }
-    for(i in k downTo 1){
+    for (i in k downTo 1) {
         cur = stack.pop()
     }
     return cur
@@ -168,10 +173,10 @@ fun getKthFromEndDoublePointer(head: ListNode?, k: Int): ListNode? {
     head ?: return null
     var fastPointer = head
     var slowPointer = head
-    for(i in k downTo 1){
+    for (i in k downTo 1) {
         fastPointer = fastPointer?.next
     }
-    while (fastPointer != null){
+    while (fastPointer != null) {
         fastPointer = fastPointer.next
         slowPointer = slowPointer?.next
     }
@@ -192,6 +197,93 @@ fun getKthFromEndRecursive(head: ListNode?, k: Int): ListNode? {
         return head
     }
     return node
+}
+
+/**
+ * 链表冒泡排序
+ * 仅限于节点交换的情况下必须是双向链表才能冒泡
+ */
+fun bubbleSortList(head: ListNode?): ListNode? {
+    head?.next ?: return head
+    var end: ListNode? = null
+    var cur = head.next
+    var pre = head
+//    var start = head
+//    while (cur != end) {
+//        while (cur != null && cur != end) {
+//            if (pre?.value ?: 0 > cur.value) {
+//                val temp = cur.next
+//                if (pre == start) {
+//                    start = cur
+//                }
+//                cur.pre = pre.pre
+//                cur.next = pre
+//                pre.pre = cur
+//                pre?.next = temp
+//                temp.pre = pre
+//                cur = temp
+//            } else {
+//                pre = cur
+//                cur = cur.next
+//            }
+//            if (cur == null || cur == end) {
+//                end = pre
+//                pre = start
+//                cur = start?.next
+//                printlnLinkedNode(start, false)
+//            }
+//        }
+//    }
+    while (cur != end) {
+        while (cur != null && cur != end) {
+            if (cur.value < pre!!.value) {
+                val temp = cur.value
+                cur.value = pre.value
+                pre.value = temp
+            }
+            val tempNode = cur
+            cur = cur.next
+            pre = tempNode
+            if (cur == null || cur == end) {
+                end = pre
+                pre = head
+                cur = head.next
+            }
+        }
+    }
+    return head
+}
+
+
+/**
+ * 查找链表的中间节点， 中间为两个的选择第二个作为中间节点返回。
+ * 快慢指针实现
+ */
+fun middleNode(head: ListNode?): ListNode? {
+    var fast: ListNode? = head
+    var slow = head
+    while (fast?.next != null) {
+        fast = fast.next?.next
+        slow = slow?.next
+    }
+    return slow
+}
+
+/**
+ * 判断是否是环形链表, HashMap辅助查找实现
+ */
+fun hasCycle(head: ListNode?): Boolean {
+    head?.next ?: return false
+    val hashMap = hashMapOf<Int, ListNode>()
+    var node = head
+    while (node != null) {
+        if (hashMap.containsValue(node)) {
+            return true
+        }
+        hashMap[node.value] = node
+        node = node.next
+    }
+    return false
 }
 
 
