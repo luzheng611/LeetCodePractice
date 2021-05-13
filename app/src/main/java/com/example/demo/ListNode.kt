@@ -1,7 +1,8 @@
 package com.example.demo
 
-import android.graphics.fonts.Font
 import java.util.*
+import java.util.concurrent.LinkedBlockingQueue
+import kotlin.collections.ArrayList
 
 fun main() {
     printlnLinkedNode(reverseLinkedList(mockLinkedNode(1, 2, 3, 4, 5)))
@@ -13,7 +14,12 @@ fun main() {
     printlnLinkedNode(getKthFromEndRecursive(mockLinkedNode(1, 3, 5, 6, 8, 29, 42), 2))
     printlnLinkedNode(bubbleSortList(mockLinkedNode(243, 234, 32390, 343, 23, 231, 2, 4, 6)))
     printlnLinkedNode(middleNode(mockLinkedNode(243, 234, 32390, 343, 23, 231, 2, 4, 6)))
-    println(isPalindrome2(mockLinkedNode(1,2,1)))
+    println(isPalindrome2(mockLinkedNode(1, 2, 1)))
+    println(getDecimalValue(mockLinkedNode(1, 0, 1)))
+    println(getDecimalValue2(mockLinkedNode(1, 0, 1)))
+    printlnLinkedNode(removeElements(mockLinkedNode(1, 0, 1, 23, 43, 545), 23))
+    printlnLinkedNode(removeElements2(mockLinkedNode(1, 0, 1, 23, 43, 545), 43))
+    println(listOfDepth())
 }
 
 class ListNode(var value: Int) {
@@ -36,6 +42,11 @@ fun mockLinkedNode(vararg args: Int): ListNode {
         cur = cur?.next
     }
     return head!!
+}
+
+// TODO: 2021/5/13 构建二叉树
+fun mockTreeNode(vararg args: Int){
+
 }
 
 fun printlnLinkedNode(head: ListNode?, ln: Boolean = false) {
@@ -322,7 +333,7 @@ fun isPalindrome(head: ListNode?): Boolean {
     head?.next ?: return true
     var node = head
     val array = arrayListOf<Int>()
-    while (node != null){
+    while (node != null) {
         array.add(node.value)
         node = node.next
     }
@@ -342,15 +353,126 @@ fun isPalindrome2(head: ListNode?): Boolean {
     front = head
     return checkPalindrome(head)
 }
+
 var front: ListNode? = null
 fun checkPalindrome(head: ListNode?): Boolean {
     if (head != null) {
-        if(!checkPalindrome(head.next)) return false
-        if(front?.value != head.value) return false
+        if (!checkPalindrome(head.next)) return false
+        if (front?.value != head.value) return false
         front = front?.next
     }
 
     return true
+}
+
+/**
+ * 链表表示的二进制整数，求十进制数
+ * 递归实现
+ */
+var bit = 0
+fun getDecimalValue(head: ListNode?): Int {
+    if (head == null) return 0
+    val value = getDecimalValue(head.next)
+    if (head.value == 0) {
+        bit++
+        return value
+    }
+    return value + times(bit++)
+}
+
+fun times(times: Int): Int {
+    if (times == 0) return 1
+    return 2 * times(times - 1)
+}
+
+/**
+ * 链表表示的二进制整数，求十进制数
+ * 顺序移位迭代实现
+ */
+fun getDecimalValue2(head: ListNode?): Int {
+    var node = head
+    var asr = 0
+    while (node != null) {
+        asr = asr.shl(1)
+        asr = asr.or(node.value)
+        node = node.next
+    }
+    return asr
+}
+
+/**
+ * 链表移除指定value的节点, 直接迭代删除，考虑删除头部，实现比较复杂
+ */
+fun removeElements(head: ListNode?, `val`: Int): ListNode? {
+    head ?: return null
+    var node = head
+    var asr = head
+    var pre: ListNode? = null
+    while (node != null) {
+        if (node.value == `val`) {
+            if (pre == null) {
+                asr = node.next
+                pre = null
+                node = node.next
+            } else {
+                pre.next = node.next
+                node = node.next
+            }
+        } else {
+            pre = node
+            node = node.next
+        }
+
+    }
+    return asr
+}
+
+/**
+ * 链表移除指定value的节点, 增加哨兵节点头部，使链表永不为空，永不无头
+ */
+fun removeElements2(head: ListNode?, `val`: Int): ListNode? {
+    head ?: return null
+    val fakeHead = ListNode(0)
+    fakeHead.next = head
+    var cur = head
+    var pre = fakeHead
+    while (cur != null) {
+        if (cur.value == `val`) {
+            pre.next = cur.next
+        } else {
+            pre = cur
+        }
+        cur = cur.next
+    }
+    return fakeHead.next
+}
+
+/**
+ * 给定一棵二叉树，设计一个算法，创建含有某一深度上所有节点的链表（比如，若一棵树的深度为 D，则会创建出 D 个链表）。返回一个包含所有深度的链表的数组。
+ * 二叉树层序遍历
+ */
+class TreeNode(var value: Int) {
+    var left: TreeNode? = null
+    var right: TreeNode? = null
+}
+
+fun listOfDepth(tree: TreeNode?): Array<ListNode?> {
+    val queue = LinkedList<TreeNode?>()
+    queue.add(tree)
+    val array = ArrayList<ListNode?>()
+    while (queue.isNotEmpty()) {
+        var depthListNode: ListNode? = ListNode(0)
+        val curQueueSize = queue.size
+        for( i in 0 until curQueueSize) {
+            val tempTreeNode = queue.poll()
+            queue.offer(tempTreeNode!!.left)
+            queue.offer(tempTreeNode.right)
+            depthListNode?.next = ListNode(tempTreeNode.value)
+        }
+        depthListNode = depthListNode?.next
+        if(depthListNode != null) array.add(depthListNode)
+    }
+    return Array(array.size){ array[it] }
 }
 
 
