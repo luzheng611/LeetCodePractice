@@ -1,7 +1,6 @@
 package com.example.demo
 
 import java.util.*
-import java.util.concurrent.LinkedBlockingQueue
 import kotlin.collections.ArrayList
 
 fun main() {
@@ -19,7 +18,7 @@ fun main() {
     println(getDecimalValue2(mockLinkedNode(1, 0, 1)))
     printlnLinkedNode(removeElements(mockLinkedNode(1, 0, 1, 23, 43, 545), 23))
     printlnLinkedNode(removeElements2(mockLinkedNode(1, 0, 1, 23, 43, 545), 43))
-    println(listOfDepth())
+    sortedListToBST(mockLinkedNode(-10,-3,0,5,9))
 }
 
 class ListNode(var value: Int) {
@@ -44,10 +43,39 @@ fun mockLinkedNode(vararg args: Int): ListNode {
     return head!!
 }
 
-// TODO: 2021/5/13 构建二叉树
-fun mockTreeNode(vararg args: Int){
-
+fun buildBinaryTree(vararg intArray: Int): TreeNode {
+    val size = intArray.size
+    val nodeList = LinkedList<TreeNode>()
+    for (i in 0 until size) {
+        nodeList.add(TreeNode(intArray[i]))
+    }
+    val lastParentIndex = size.shr(1) - 1
+    for (i in lastParentIndex downTo 0 step 1) {
+        val parent = nodeList[i]
+        val leftIndex = i.shl(1) + 1
+        val rightIndex = i.shl(1) + 2
+        if (leftIndex <= intArray.lastIndex) parent.left = nodeList[leftIndex]
+        if (rightIndex <= intArray.lastIndex) parent.right = nodeList[rightIndex]
+    }
+    return nodeList[0]
 }
+
+fun inOrderBinaryTree(root: TreeNode?) {
+    if (root != null) {
+        inOrderBinaryTree(root.left)
+        print("${root.value} ")
+        inOrderBinaryTree(root.right)
+    }
+}
+
+fun preOrderBinaryTree(root: TreeNode?) {
+    if (root != null) {
+        print("${root.value} ")
+        inOrderBinaryTree(root.left)
+        inOrderBinaryTree(root.right)
+    }
+}
+
 
 fun printlnLinkedNode(head: ListNode?, ln: Boolean = false) {
     var cur: ListNode? = head
@@ -462,18 +490,61 @@ fun listOfDepth(tree: TreeNode?): Array<ListNode?> {
     val array = ArrayList<ListNode?>()
     while (queue.isNotEmpty()) {
         var depthListNode: ListNode? = ListNode(0)
+        var curNode = depthListNode
         val curQueueSize = queue.size
-        for( i in 0 until curQueueSize) {
-            val tempTreeNode = queue.poll()
-            queue.offer(tempTreeNode!!.left)
-            queue.offer(tempTreeNode.right)
-            depthListNode?.next = ListNode(tempTreeNode.value)
+        for (i in 0 until curQueueSize) {
+            val tempTreeNode = queue.pollFirst()
+            tempTreeNode?.apply {
+                if (left != null) queue.add(left)
+                if (right != null) queue.add(right)
+                curNode?.next = ListNode(tempTreeNode.value)
+                curNode = curNode?.next
+            }
         }
         depthListNode = depthListNode?.next
-        if(depthListNode != null) array.add(depthListNode)
+        if (depthListNode != null) array.add(depthListNode)
     }
-    return Array(array.size){ array[it] }
+    return Array(array.size) { array[it] }
 }
+
+/**
+ * 给定一个单链表，其中的元素按升序排序，将其转换为高度平衡的二叉搜索树。
+ * 本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+ *
+ * 转成数组后再递归左右子树
+ */
+fun sortedListToBST(head: ListNode?): TreeNode? {
+    var cur = head
+    val nodeList = ArrayList<Int>()
+    while (cur != null) {
+        nodeList.add(cur.value)
+        cur = cur.next
+    }
+    val array = nodeList.toIntArray()
+    return sortedListToBST(array, 0, array.size - 1)
+}
+
+fun sortedListToBST(array: IntArray, left: Int, right: Int): TreeNode? {
+    if(left >= right) return null
+    val mid =(right + left).shr(1) + 1.shr(1)
+    val root = TreeNode(array[mid])
+    root.left = sortedListToBST(array, left, mid - 1)
+    root.right = sortedListToBST(array, mid + 1, right)
+    return root
+}
+
+/**
+ * 给定一个单链表，其中的元素按升序排序，将其转换为高度平衡的二叉搜索树。
+ * 本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+ *
+ * 直接使用快慢指针查找中位节点后递归左右子树
+ */
+fun sortedListToBST2(head: ListNode?): TreeNode? {
+    return root
+}
+
+
+
 
 
 
