@@ -18,7 +18,7 @@ fun main() {
     println(getDecimalValue2(mockLinkedNode(1, 0, 1)))
     printlnLinkedNode(removeElements(mockLinkedNode(1, 0, 1, 23, 43, 545), 23))
     printlnLinkedNode(removeElements2(mockLinkedNode(1, 0, 1, 23, 43, 545), 43))
-    sortedListToBST(mockLinkedNode(-10,-3,0,5,9))
+    printlnLinkedNode(mergeInBetween(mockLinkedNode(0,1,2,3,4,5,6),3,5, mockLinkedNode(100,1000,10009)))
 }
 
 class ListNode(var value: Int) {
@@ -525,8 +525,8 @@ fun sortedListToBST(head: ListNode?): TreeNode? {
 }
 
 fun sortedListToBST(array: IntArray, left: Int, right: Int): TreeNode? {
-    if(left >= right) return null
-    val mid =(right + left).shr(1) + 1.shr(1)
+    if (left >= right) return null
+    val mid = (right + left).shr(1) + 1.shr(1)
     val root = TreeNode(array[mid])
     root.left = sortedListToBST(array, left, mid - 1)
     root.right = sortedListToBST(array, mid + 1, right)
@@ -540,7 +540,64 @@ fun sortedListToBST(array: IntArray, left: Int, right: Int): TreeNode? {
  * 直接使用快慢指针查找中位节点后递归左右子树
  */
 fun sortedListToBST2(head: ListNode?): TreeNode? {
+    return buildBST(head, null)
+}
+
+fun buildBST(left: ListNode?, right: ListNode?): TreeNode? {
+    if(left == right) return null
+    val mid = getMidNode(left, right) ?: return null
+    val root = TreeNode(mid.value)
+    root.left = buildBST(left, mid)
+    root.right = buildBST(mid.next, right)
     return root
+}
+
+fun getMidNode(left: ListNode?, right: ListNode?): ListNode? {
+    if (left == right) return null
+    var slow = left
+    var fast = left
+    while (fast != right && fast?.next != right) {
+        slow = slow?.next
+        fast = fast?.next?.next
+    }
+    return slow
+}
+
+/**
+ * 给你两个链表 list1 和 list2 ，它们包含的元素分别为 n 个和 m 个。
+
+请你将 list1 中第 a 个节点到第 b 个节点删除，并将list2 接在被删除节点的位置。
+
+ */
+fun mergeInBetween(list1: ListNode?, a: Int, b: Int, list2: ListNode?): ListNode? {
+    list1 ?: return  list2
+    list2 ?: return  list1
+    var pre = list1
+    var next: ListNode? = null
+    var cur = list1
+    var tempA= a - 1
+    var tempB = b
+    while (tempA != 0 || tempB != 0){
+        cur = cur?.next
+        if (tempA != 0) {
+            if(--tempA == 0){
+                pre = cur
+            }
+        }
+        if(tempB != 0){
+            if(--tempB == 0){
+                next = cur?.next
+                cur?.next = null
+            }
+        }
+    }
+    pre?.next = list2
+    var cur2 = list2
+    while (cur2?.next != null) {
+        cur2 = cur2.next
+    }
+    cur2?.next = next
+    return list1
 }
 
 
