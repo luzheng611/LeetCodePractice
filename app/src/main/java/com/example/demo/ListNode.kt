@@ -21,6 +21,7 @@ fun main() {
     printlnLinkedNode(mergeInBetween(mockLinkedNode(0, 1, 2, 3, 4, 5, 6), 3, 5, mockLinkedNode(100, 1000, 10009)))
     printlnLinkedNode(insertionSortList(mockLinkedNode(32,234,45323,12,432,523,4,3)))
     printlnLinkedNode(partition(mockLinkedNode(3,5,8,5,10,2,1),5))
+    printlnLinkedNode(oddEvenList(mockLinkedNode(2,1,3,5,6,4,7)))
 }
 
 class ListNode(var value: Int) {
@@ -657,6 +658,32 @@ fun partition(head: ListNode?, x: Int): ListNode? {
     return smallHead.next
 }
 
+/**
+ * 给定一个单链表，把所有的奇数节点和偶数节点分别排在一起。请注意，这里的奇数节点和偶数节点指的是节点编号的奇偶性，而不是节点的值的奇偶性。
+ *请尝试使用原地算法完成。你的算法的空间复杂度应为 O(1)，时间复杂度应为 O(nodes)，nodes 为节点总数。
+ */
+fun oddEvenList(head: ListNode?): ListNode? {
+    head ?: return null
+    val oddHead = ListNode(0)
+    val evenHead = ListNode(0)
+    var odd = oddHead
+    var even = evenHead
+    var cur = head
+    var index = 1
+    while (cur != null) {
+        if (index++.rem(2) == 1) {
+            odd.next = cur
+            odd = cur
+        } else {
+            even.next = cur
+            even = cur
+        }
+        cur = cur.next
+    }
+    odd.next = evenHead.next
+    even.next = null
+    return oddHead.next
+}
 
 
 
