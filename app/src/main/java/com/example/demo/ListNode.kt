@@ -20,6 +20,7 @@ fun main() {
     printlnLinkedNode(removeElements2(mockLinkedNode(1, 0, 1, 23, 43, 545), 43))
     printlnLinkedNode(mergeInBetween(mockLinkedNode(0, 1, 2, 3, 4, 5, 6), 3, 5, mockLinkedNode(100, 1000, 10009)))
     printlnLinkedNode(insertionSortList(mockLinkedNode(32,234,45323,12,432,523,4,3)))
+    printlnLinkedNode(partition(mockLinkedNode(3,5,8,5,10,2,1),5))
 }
 
 class ListNode(var value: Int) {
@@ -612,11 +613,11 @@ fun insertionSortList(head: ListNode?): ListNode? {
     var cur = head.next
     var lastSorted: ListNode? = head
     while (cur != null) {
-        if(lastSorted!!.value <= cur.value){
+        if (lastSorted!!.value <= cur.value) {
             lastSorted = lastSorted.next
         } else {
             var pre: ListNode = tempHead
-            while (pre.next!!.value  < cur.value){
+            while (pre.next!!.value < cur.value) {
                 pre = pre.next!!
             }
             val temp = pre.next
@@ -627,6 +628,33 @@ fun insertionSortList(head: ListNode?): ListNode? {
         cur = lastSorted?.next
     }
     return tempHead.next
+}
+
+/**
+ * 编写程序以 x 为基准分割链表，使得所有小于 x 的节点排在大于或等于 x 的节点之前。如果链表中包含 x，x 只需出现在小于 x 的元素之后(如下所示)。分割元素 x 只需处于“右半部分”即可，其不需要被置于左右两部分之间。
+ * 输入: head = 3->5->8->5->10->2->1, x = 5
+ * 输出: 3->1->2->10->5->5->8
+ */
+fun partition(head: ListNode?, x: Int): ListNode? {
+    head ?: return null
+    val smallHead = ListNode(0)
+    val largeHead = ListNode(0)
+    var large: ListNode? = largeHead
+    var small: ListNode? = smallHead
+    var cur = head
+    while (cur != null) {
+        if(cur.value < x){
+            small?.next = cur
+            small = cur
+        } else {
+            large?.next = cur
+            large = cur
+        }
+        cur = cur.next
+    }
+    small?.next = largeHead.next
+    large?.next = null
+    return smallHead.next
 }
 
 
