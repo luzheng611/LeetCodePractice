@@ -685,6 +685,39 @@ fun oddEvenList(head: ListNode?): ListNode? {
     return oddHead.next
 }
 
+/**
+ * 输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。
+ */
+fun treeToDoublyList(root: TreeNode?): TreeNode? {
+    if (root == null) return root
+    val stack = Stack<TreeNode>()
+    var head: TreeNode? = null //头节点
+    var point = root //遍历节点
+    var pre: TreeNode? = null //保存父节点
+    while (!stack.isEmpty() || point != null) {
+        while (point != null) {
+            stack.push(point)
+            point = point.left
+        }
+        if (!stack.isEmpty()) {
+            val cur = stack.pop() as TreeNode
+            if (pre == null) { //如果上一个节点为空意味着刚开始回溯节点，初始化头节点和父节点
+                head = cur
+                pre = cur
+            } else { //否则将父节点的right指向当前节点，当前节点的left指向父节点，更新父节点
+                pre.right = cur
+                cur.left = pre
+                pre = cur
+            }
+            point = cur.right
+            if (stack.isEmpty() && point == null) { //如果栈空了和当前遍历节点也为空意味着遍历到了最后一个节点，那么将为节点的right指向头节点，头节点的left指向为节点
+                cur.right = head
+                head?.left = cur
+            }
+        }
+    }
+    return head
+}
 
 
 
