@@ -18,7 +18,8 @@ fun main() {
     println(getDecimalValue2(mockLinkedNode(1, 0, 1)))
     printlnLinkedNode(removeElements(mockLinkedNode(1, 0, 1, 23, 43, 545), 23))
     printlnLinkedNode(removeElements2(mockLinkedNode(1, 0, 1, 23, 43, 545), 43))
-    printlnLinkedNode(mergeInBetween(mockLinkedNode(0,1,2,3,4,5,6),3,5, mockLinkedNode(100,1000,10009)))
+    printlnLinkedNode(mergeInBetween(mockLinkedNode(0, 1, 2, 3, 4, 5, 6), 3, 5, mockLinkedNode(100, 1000, 10009)))
+    printlnLinkedNode(insertionSortList(mockLinkedNode(32,234,45323,12,432,523,4,3)))
 }
 
 class ListNode(var value: Int) {
@@ -544,7 +545,7 @@ fun sortedListToBST2(head: ListNode?): TreeNode? {
 }
 
 fun buildBST(left: ListNode?, right: ListNode?): TreeNode? {
-    if(left == right) return null
+    if (left == right) return null
     val mid = getMidNode(left, right) ?: return null
     val root = TreeNode(mid.value)
     root.left = buildBST(left, mid)
@@ -570,22 +571,22 @@ fun getMidNode(left: ListNode?, right: ListNode?): ListNode? {
 
  */
 fun mergeInBetween(list1: ListNode?, a: Int, b: Int, list2: ListNode?): ListNode? {
-    list1 ?: return  list2
-    list2 ?: return  list1
+    list1 ?: return list2
+    list2 ?: return list1
     var pre = list1
     var next: ListNode? = null
     var cur = list1
-    var tempA= a - 1
+    var tempA = a - 1
     var tempB = b
-    while (tempA != 0 || tempB != 0){
+    while (tempA != 0 || tempB != 0) {
         cur = cur?.next
         if (tempA != 0) {
-            if(--tempA == 0){
+            if (--tempA == 0) {
                 pre = cur
             }
         }
-        if(tempB != 0){
-            if(--tempB == 0){
+        if (tempB != 0) {
+            if (--tempB == 0) {
                 next = cur?.next
                 cur?.next = null
             }
@@ -599,6 +600,35 @@ fun mergeInBetween(list1: ListNode?, a: Int, b: Int, list2: ListNode?): ListNode
     cur2?.next = next
     return list1
 }
+
+/**
+ * 对链表进行插入排序。
+ */
+fun insertionSortList(head: ListNode?): ListNode? {
+    head ?: return null
+    var stack = Stack<ListNode?>()
+    val tempHead = ListNode(0)
+    tempHead.next = head
+    var cur = head.next
+    var lastSorted: ListNode? = head
+    while (cur != null) {
+        if(lastSorted!!.value <= cur.value){
+            lastSorted = lastSorted.next
+        } else {
+            var pre: ListNode = tempHead
+            while (pre.next!!.value  < cur.value){
+                pre = pre.next!!
+            }
+            val temp = pre.next
+            lastSorted.next = cur.next
+            pre.next = cur
+            cur.next = temp
+        }
+        cur = lastSorted?.next
+    }
+    return tempHead.next
+}
+
 
 
 
