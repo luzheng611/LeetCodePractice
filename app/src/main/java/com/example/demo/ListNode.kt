@@ -18,10 +18,18 @@ fun main() {
     println(getDecimalValue2(mockLinkedNode(1, 0, 1)))
     printlnLinkedNode(removeElements(mockLinkedNode(1, 0, 1, 23, 43, 545), 23))
     printlnLinkedNode(removeElements2(mockLinkedNode(1, 0, 1, 23, 43, 545), 43))
-    printlnLinkedNode(mergeInBetween(mockLinkedNode(0, 1, 2, 3, 4, 5, 6), 3, 5, mockLinkedNode(100, 1000, 10009)))
-    printlnLinkedNode(insertionSortList(mockLinkedNode(32,234,45323,12,432,523,4,3)))
-    printlnLinkedNode(partition(mockLinkedNode(3,5,8,5,10,2,1),5))
-    printlnLinkedNode(oddEvenList(mockLinkedNode(2,1,3,5,6,4,7)))
+    printlnLinkedNode(
+        mergeInBetween(
+            mockLinkedNode(0, 1, 2, 3, 4, 5, 6),
+            3,
+            5,
+            mockLinkedNode(100, 1000, 10009)
+        )
+    )
+    printlnLinkedNode(insertionSortList(mockLinkedNode(32, 234, 45323, 12, 432, 523, 4, 3)))
+    printlnLinkedNode(partition(mockLinkedNode(3, 5, 8, 5, 10, 2, 1), 5))
+    printlnLinkedNode(oddEvenList(mockLinkedNode(2, 1, 3, 5, 6, 4, 7)))
+    printlnLinkedNode(swapNodes(mockLinkedNode(2, 1, 3, 5, 6, 4, 7), 2))
 }
 
 class ListNode(var value: Int) {
@@ -644,7 +652,7 @@ fun partition(head: ListNode?, x: Int): ListNode? {
     var small: ListNode? = smallHead
     var cur = head
     while (cur != null) {
-        if(cur.value < x){
+        if (cur.value < x) {
             small?.next = cur
             small = cur
         } else {
@@ -718,6 +726,30 @@ fun treeToDoublyList(root: TreeNode?): TreeNode? {
     }
     return head
 }
+
+/**
+ * 给你链表的头节点 head 和一个整数 k 。交换 链表正数第 k 个节点和倒数第 k 个节点的值后，返回链表的头节点（链表 从 1 开始索引）。
+ */
+fun swapNodes(head: ListNode?, k: Int): ListNode? {
+    head ?: return null
+    var firstKNode = head
+    var slow: ListNode? = head
+    var fast: ListNode? = head
+    for (i in k - 1 downTo 1) {
+        fast = fast?.next
+        firstKNode = fast
+    }
+    while (fast?.next != null) {
+        slow = slow?.next
+        fast = fast.next
+    }
+    val temp = firstKNode!!.value
+    firstKNode.value = slow!!.value
+    slow.value = temp
+    return head
+}
+
+
 
 
 
