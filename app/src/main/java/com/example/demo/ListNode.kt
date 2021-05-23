@@ -30,7 +30,8 @@ fun main() {
     printlnLinkedNode(partition(mockLinkedNode(3, 5, 8, 5, 10, 2, 1), 5))
     printlnLinkedNode(oddEvenList(mockLinkedNode(2, 1, 3, 5, 6, 4, 7)))
     printlnLinkedNode(swapNodes(mockLinkedNode(2, 1, 3, 5, 6, 4, 7), 2))
-    printlnLinkedNode(reorderList(mockLinkedNode(1,2,3,4,5,6)))
+    printlnLinkedNode(reorderList(mockLinkedNode(1, 2, 3, 4, 5, 6)))
+    println(numComponents(mockLinkedNode(1, 2, 3, 4, 5, 6), intArrayOf(1, 3, 5, 6)))
 }
 
 class ListNode(var value: Int) {
@@ -774,19 +775,38 @@ fun reorderList(head: ListNode?): ListNode? {
     point = head
     var tail: ListNode? = null
     var next: ListNode? = null
-    while(!stack.isEmpty()) {
+    while (!stack.isEmpty()) {
         next = point?.next
         tail = stack.pop()
         point?.next = tail
         tail?.next = next
         point = next
     }
-    if(next != slow) {
+    if (next != slow) {
         tail?.next = null
     } else {
         next?.next = null
     }
     return tempHead.next
+}
+
+/**
+ * 给定链表头结点 head，该链表上的每个结点都有一个 唯一的整型值 。
+ *同时给定列表 G，该列表是上述链表中整型值的一个子集。
+ *返回列表 G 中组件的个数，这里对组件的定义为：链表中一段最长连续结点的值（该值必须在列表 G 中）构成的集合。
+ */
+fun numComponents(head: ListNode?, nums: IntArray): Int {
+    head ?: return 0
+    val arrayList = nums.toMutableList()
+    var cur = head
+    var asr = 0
+    while (cur != null) {
+        if (arrayList.contains(cur.value) && (cur.next == null || !arrayList.contains(cur.next?.value))) {
+            asr++
+        }
+        cur = cur.next
+    }
+    return asr
 }
 
 
