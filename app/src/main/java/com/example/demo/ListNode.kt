@@ -30,6 +30,7 @@ fun main() {
     printlnLinkedNode(partition(mockLinkedNode(3, 5, 8, 5, 10, 2, 1), 5))
     printlnLinkedNode(oddEvenList(mockLinkedNode(2, 1, 3, 5, 6, 4, 7)))
     printlnLinkedNode(swapNodes(mockLinkedNode(2, 1, 3, 5, 6, 4, 7), 2))
+    printlnLinkedNode(reorderList(mockLinkedNode(1,2,3,4,5,6)))
 }
 
 class ListNode(var value: Int) {
@@ -748,6 +749,49 @@ fun swapNodes(head: ListNode?, k: Int): ListNode? {
     slow.value = temp
     return head
 }
+
+/**
+ * 给定一个单链表 L：L0→L1→…→Ln-1→Ln ，
+ *将其重新排列后变为： L0→Ln→L1→Ln-1→L2→Ln-2→…
+ *你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+ */
+fun reorderList(head: ListNode?): ListNode? {
+    head?.next ?: return null
+    val tempHead = ListNode(0)
+    tempHead.next = head
+    var slow: ListNode? = tempHead
+    var fast: ListNode? = tempHead
+    val stack = Stack<ListNode?>()
+    while (fast?.next != null) {
+        slow = slow?.next
+        fast = fast.next?.next
+    }
+    var point = slow?.next
+    while (point != null) {
+        stack.push(point)
+        point = point.next
+    }
+    point = head
+    var tail: ListNode? = null
+    var next: ListNode? = null
+    while(!stack.isEmpty()) {
+        next = point?.next
+        tail = stack.pop()
+        point?.next = tail
+        tail?.next = next
+        point = next
+    }
+    if(next != slow) {
+        tail?.next = null
+    } else {
+        next?.next = null
+    }
+    return tempHead.next
+}
+
+
+
+
 
 
 
