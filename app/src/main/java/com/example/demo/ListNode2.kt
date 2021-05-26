@@ -7,6 +7,7 @@ fun main() {
     splitListToParts(mockLinkedNode(0, 1, 2, 3, 4), 3)
     printlnLinkedNode(reverseBetween2(mockLinkedNode(1,2,3,4,5),2,4))
     printlnLinkedNode(reverseBetween(mockLinkedNode(1,2,3,4,5),2,4))
+    printlnLinkedNode(addTwoNumbers(mockLinkedNode(7,1,6), mockLinkedNode(5,9,2)))
 }
 
 /**
@@ -148,7 +149,35 @@ fun reverseBetween2(head: ListNode?, left: Int, right: Int): ListNode? {
     return tempHead.next
 }
 
-
+/**
+ * 给定两个用链表表示的整数，每个节点包含一个数位。
+ *这些数位是反向存放的，也就是个位排在链表首部。
+ *编写函数对这两个整数求和，并用链表形式返回结果。
+ */
+fun addTwoNumbers(l1: ListNode?, l2: ListNode?): ListNode? {
+    if(l1 == null && l2 == null) return null
+    var extra = 0
+    var cur1 = l1
+    var cur2 = l2
+    val tempHead = ListNode(0)
+    var cur: ListNode? = tempHead
+    while (cur1 != null || cur2 != null) {
+        val val1 = cur1?.value ?: 0
+        val val2 = cur2?.value ?: 0
+        val value = (val1 + val2 + extra).rem(10)
+        extra = (val1 + val2 + extra).div(10)
+        cur?.next = ListNode(value)
+        cur = cur?.next
+        cur1 = cur1?.next
+        cur2 = cur2?.next
+    }
+    if (extra != 0) {
+        cur?.next = ListNode(0)
+        cur = cur?.next
+        cur?.value = extra
+    }
+    return tempHead.next
+}
 
 
 
