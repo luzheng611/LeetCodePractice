@@ -1,9 +1,11 @@
 package com.example.demo
 
 import java.util.*
+import kotlin.collections.HashMap
 
 fun main() {
-    splitListToParts(mockLinkedNode(0,1,2,3,4),3)
+    splitListToParts(mockLinkedNode(0, 1, 2, 3, 4), 3)
+
 }
 
 /**
@@ -21,18 +23,19 @@ fun splitListToParts(root: ListNode?, k: Int): Array<ListNode?> {
         queue.offer(cur)
         cur = cur.next
     }
-    val asr: Array<ListNode?> = Array(k){null}
-    if(queue.size <= k){
-        for(i in 0 until k){
+    val asr: Array<ListNode?> = Array(k) { null }
+    if (queue.size <= k) {
+        for (i in 0 until k) {
             val node = queue.poll().apply { this?.next = null }
             asr[i] = node ?: return asr
         }
     } else {
         val arraySize: Int = queue.size.div(k)
         val extraSize: Int = queue.size - arraySize * k
-        for(i in 0 until k) {
-            val realArraySize = arraySize + if(i + 1 <= extraSize) 1 else 0
-            val headIndex =if(i == 0) 0 else ( i * arraySize + if(i + 1 <= extraSize) i else extraSize )
+        for (i in 0 until k) {
+            val realArraySize = arraySize + if (i + 1 <= extraSize) 1 else 0
+            val headIndex =
+                if (i == 0) 0 else (i * arraySize + if (i + 1 <= extraSize) i else extraSize)
             val head = queue[headIndex]
             val tail = queue[headIndex + realArraySize - 1]
             tail?.next = null
@@ -41,3 +44,47 @@ fun splitListToParts(root: ListNode?, k: Int): Array<ListNode?> {
     }
     return asr
 }
+
+/**
+ * 检测是否是环形链表
+ * 通过队列存储遍历路径，发现返回到已存储的节点上时代表环形，遍历到空节点代表不是环形.
+ */
+fun detectCycle(head: ListNode?): ListNode? {
+    head ?: return null
+    val map = HashMap<ListNode?, ListNode?>()
+    var cur = head
+    while (cur != null) {
+        if (map.containsKey(cur)) {
+            return cur
+        }
+        map[cur] = cur
+        cur = cur.next
+    }
+    return null
+}
+
+/**
+ * 检测是否是环形链表
+ * 快慢指针，如果存在环的话那么始终会在环中相遇，相遇节点定义一个cur节点，将slow节点从头开始遍历，cur节点也每次遍历一个节点，slow = cur时则为环入口节点
+ */
+fun detectCycle2(head: ListNode?): ListNode? {
+    head ?: return null
+    var slow = head
+    var fast = head
+    var cur: ListNode?
+    while (fast?.next != null) {
+        slow = slow?.next
+        fast = fast.next?.next
+        if (fast == slow) {
+            cur = fast
+            slow = head
+            while(cur != slow){
+                cur = cur?.next
+                slow = slow?.next
+            }
+            return cur
+        }
+    }
+    return null
+}
+
