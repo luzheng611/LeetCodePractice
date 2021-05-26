@@ -5,7 +5,8 @@ import kotlin.collections.HashMap
 
 fun main() {
     splitListToParts(mockLinkedNode(0, 1, 2, 3, 4), 3)
-
+    printlnLinkedNode(reverseBetween2(mockLinkedNode(1,2,3,4,5),2,4))
+    printlnLinkedNode(reverseBetween(mockLinkedNode(1,2,3,4,5),2,4))
 }
 
 /**
@@ -87,4 +88,120 @@ fun detectCycle2(head: ListNode?): ListNode? {
     }
     return null
 }
+
+/**
+ * 给你单链表的头指针 head 和两个整数 left 和 right ，其中 left <= right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。 1为头结点
+ * Case:先遍历到right，得到preNode，leftNode，rightNode，postNode，然后翻转leftNode到rightNode的节点，将right链接到pre，post链接到left
+ */
+fun reverseBetween(head: ListNode?, left: Int, right: Int): ListNode? {
+    head ?: return head
+    val tempHead = ListNode(0)
+    tempHead.next = head
+    var leftNode: ListNode? = null
+    var rightNode: ListNode? = null
+    var preNode: ListNode? = null
+    var postNode: ListNode? = null
+    var iter: ListNode? = tempHead
+    for (i in 0 .. right) {
+        if(left == i) leftNode = iter
+        if(right == i) {
+            rightNode = iter
+            postNode = rightNode?.next
+            break
+        }
+        if(i == left - 1)  preNode = iter
+        iter = iter?.next
+    }
+    iter = leftNode?.next
+    var pre = leftNode
+    while( iter != postNode) {
+        val tempNext = iter?.next
+        iter?.next = pre
+        pre = iter
+        iter = tempNext
+    }
+    preNode?.next = rightNode
+    leftNode?.next = postNode
+    return tempHead.next
+}
+
+/**
+ * 给你单链表的头指针 head 和两个整数 left 和 right ，其中 left <= right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。 1为头结点
+ * Case:遍历到left到right中节点时一次将节点添加到left标识的位置，并记录下一个节点next，直到next的位置等于right
+ */
+fun reverseBetween2(head: ListNode?, left: Int, right: Int): ListNode? {
+    head ?: return head
+    val tempHead = ListNode(0)
+    tempHead.next = head
+    var pre: ListNode? = tempHead
+    for (i in 0 until left - 1) {
+        pre = pre?.next
+    }
+    val cur: ListNode? = pre?.next
+    var next: ListNode?
+    for (i in left until right) {
+        next = cur?.next
+        cur?.next = next?.next
+        next?.next = pre?.next
+        pre?.next = next
+    }
+    return tempHead.next
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
