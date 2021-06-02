@@ -8,6 +8,8 @@ fun main() {
     printlnLinkedNode(reverseBetween2(mockLinkedNode(1,2,3,4,5),2,4))
     printlnLinkedNode(reverseBetween(mockLinkedNode(1,2,3,4,5),2,4))
     printlnLinkedNode(addTwoNumbers(mockLinkedNode(7,1,6), mockLinkedNode(5,9,2)))
+    printlnLinkedNode(rotateRight(mockLinkedNode(0,1,2), 4))
+    printlnLinkedNode(rotateRight2(mockLinkedNode(0,1,2), 4))
 }
 
 /**
@@ -179,6 +181,59 @@ fun addTwoNumbers(l1: ListNode?, l2: ListNode?): ListNode? {
     return tempHead.next
 }
 
+/**
+ * 给你一个链表的头节点 head ，旋转链表，将链表每个节点向右移动 k 个位置。
+ */
+fun rotateRight(head: ListNode?, k: Int): ListNode? {
+    head ?: return null
+    var cur = head
+    var pre = head
+    var tempHead = head
+    var size = 0
+    while (cur != null) {
+        size++
+        cur = cur.next
+    }
+    for (i in 1.. k.rem(size)) {
+        cur = tempHead
+        while (cur?.next != null) {
+            if(cur.next?.next == null){
+                pre = cur
+            }
+            cur = cur.next
+        }
+        cur?.next = tempHead
+        pre?.next = null
+        tempHead = cur
+    }
+    return tempHead
+}
+
+/**
+ * 给你一个链表的头节点 head ，旋转链表，将链表每个节点向右移动 k 个位置。
+ * 解法： 将链表变成环，取size
+ */
+fun rotateRight2(head: ListNode?, k: Int): ListNode? {
+    head ?: return null
+    var cur = head
+    var tempHead = head
+    var size = 0
+    while (cur != null) {
+        size++
+        if (cur.next == null) {
+            cur.next = tempHead
+            break
+        } else {
+            cur = cur.next
+        }
+    }
+    for (i in 1 .. size - k.rem(size)) {
+        cur = cur?.next
+    }
+    tempHead = cur?.next
+    cur?.next = null
+    return tempHead
+}
 
 
 
