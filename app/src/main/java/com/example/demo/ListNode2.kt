@@ -5,11 +5,12 @@ import kotlin.collections.HashMap
 
 fun main() {
     splitListToParts(mockLinkedNode(0, 1, 2, 3, 4), 3)
-    printlnLinkedNode(reverseBetween2(mockLinkedNode(1,2,3,4,5),2,4))
-    printlnLinkedNode(reverseBetween(mockLinkedNode(1,2,3,4,5),2,4))
-    printlnLinkedNode(addTwoNumbers(mockLinkedNode(7,1,6), mockLinkedNode(5,9,2)))
-    printlnLinkedNode(rotateRight(mockLinkedNode(0,1,2), 4))
-    printlnLinkedNode(rotateRight2(mockLinkedNode(0,1,2), 4))
+    printlnLinkedNode(reverseBetween2(mockLinkedNode(1, 2, 3, 4, 5), 2, 4))
+    printlnLinkedNode(reverseBetween(mockLinkedNode(1, 2, 3, 4, 5), 2, 4))
+    printlnLinkedNode(addTwoNumbers(mockLinkedNode(7, 1, 6), mockLinkedNode(5, 9, 2)))
+    printlnLinkedNode(rotateRight(mockLinkedNode(0, 1, 2), 4))
+    printlnLinkedNode(rotateRight2(mockLinkedNode(0, 1, 2), 4))
+    printlnLinkedNode(mergeTwoListNode(mockLinkedNode(0, 4, 6), mockLinkedNode(1,5,9)))
 }
 
 /**
@@ -82,7 +83,7 @@ fun detectCycle2(head: ListNode?): ListNode? {
         if (fast == slow) {
             cur = fast
             slow = head
-            while(cur != slow){
+            while (cur != slow) {
                 cur = cur?.next
                 slow = slow?.next
             }
@@ -105,19 +106,19 @@ fun reverseBetween(head: ListNode?, left: Int, right: Int): ListNode? {
     var preNode: ListNode? = null
     var postNode: ListNode? = null
     var iter: ListNode? = tempHead
-    for (i in 0 .. right) {
-        if(left == i) leftNode = iter
-        if(right == i) {
+    for (i in 0..right) {
+        if (left == i) leftNode = iter
+        if (right == i) {
             rightNode = iter
             postNode = rightNode?.next
             break
         }
-        if(i == left - 1)  preNode = iter
+        if (i == left - 1) preNode = iter
         iter = iter?.next
     }
     iter = leftNode?.next
     var pre = leftNode
-    while( iter != postNode) {
+    while (iter != postNode) {
         val tempNext = iter?.next
         iter?.next = pre
         pre = iter
@@ -157,7 +158,7 @@ fun reverseBetween2(head: ListNode?, left: Int, right: Int): ListNode? {
  *编写函数对这两个整数求和，并用链表形式返回结果。
  */
 fun addTwoNumbers(l1: ListNode?, l2: ListNode?): ListNode? {
-    if(l1 == null && l2 == null) return null
+    if (l1 == null && l2 == null) return null
     var extra = 0
     var cur1 = l1
     var cur2 = l2
@@ -194,10 +195,10 @@ fun rotateRight(head: ListNode?, k: Int): ListNode? {
         size++
         cur = cur.next
     }
-    for (i in 1.. k.rem(size)) {
+    for (i in 1..k.rem(size)) {
         cur = tempHead
         while (cur?.next != null) {
-            if(cur.next?.next == null){
+            if (cur.next?.next == null) {
                 pre = cur
             }
             cur = cur.next
@@ -227,12 +228,64 @@ fun rotateRight2(head: ListNode?, k: Int): ListNode? {
             cur = cur.next
         }
     }
-    for (i in 1 .. size - k.rem(size)) {
+    for (i in 1..size - k.rem(size)) {
         cur = cur?.next
     }
     tempHead = cur?.next
     cur?.next = null
     return tempHead
+}
+
+/**
+ * 给你一个链表数组，每个链表都已经按升序排列。
+ * 请你将所有链表合并到一个升序链表中，返回合并后的链表。
+ * 输入：lists = [[1,4,5],[1,3,4],[2,6]]
+ * 输出：[1,1,2,3,4,4,5,6]
+ * 解释：链表数组如下：
+ * [
+ * 1->4->5,
+ * 1->3->4,
+ * 2->6
+ * ]
+ * 将它们合并到一个有序链表中得到。
+ * 1->1->2->3->4->4->5->6
+ */
+fun mergeKLists(lists: Array<ListNode?>): ListNode? {
+    if (lists.isEmpty()) return null
+    if (lists.size == 1) return lists[0]
+    var ans: ListNode? = ListNode(0)
+    for (i in lists.indices) {
+        ans = mergeTwoListNode(ans, lists[i])
+    }
+    return ans
+}
+
+fun mergeTwoListNode(l1: ListNode?, l2: ListNode?): ListNode? {
+    l1 ?: return l2
+    l2 ?: return l1
+    var cur1 = l1
+    var cur2 = l2
+    val tempHead = ListNode(0)
+    var cur: ListNode? = tempHead
+    while (cur1 != null && cur2 != null) {
+        if (cur1.value < cur2.value) {
+            cur?.next = cur1
+            cur1 = cur1.next
+        } else {
+            cur?.next = cur2
+            cur2 = cur2.next
+        }
+        cur = cur?.next
+        if (cur1 == null) {
+            cur?.next = cur2
+            break
+        }
+        if (cur2 == null) {
+            cur?.next = cur1
+            break
+        }
+    }
+    return tempHead.next
 }
 
 
