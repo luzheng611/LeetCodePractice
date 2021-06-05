@@ -17,3 +17,15 @@ fun mergeTrees(root1: TreeNode?, root2: TreeNode?): TreeNode? {
     return ans
 }
 
+/**
+ * 请完成一个函数，输入一个二叉树，该函数输出它的镜像。
+ */
+fun mirrorTree(root: TreeNode?): TreeNode? {
+    root ?: return null
+    val tempRight = root.right
+    root.right = root.left
+    root.left = tempRight
+    mirrorTree(root.right)
+    mirrorTree(root.left)
+    return root
+}
