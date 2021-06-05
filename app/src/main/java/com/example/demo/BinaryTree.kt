@@ -1,5 +1,6 @@
 package com.example.demo
 
+import android.util.Log
 import java.util.*
 
 fun main() {
@@ -51,4 +52,25 @@ fun maxDepth(root: TreeNode?): Int {
         }
     }
     return ans
+}
+
+fun preOrderRecursive(root: TreeNode?){
+    root ?: return
+    Log.e("luzheng", "preOrderRecursive: $root" )
+    preOrderBinaryTree(root.left)
+    preOrderBinaryTree(root.right)
+}
+
+fun inOrderRecursive(root: TreeNode?){
+    root ?: return
+    preOrderBinaryTree(root.left)
+    Log.e("luzheng", "preOrderRecursive: $root" )
+    preOrderBinaryTree(root.right)
+}
+
+fun postOrderRecursive(root: TreeNode?){
+    root ?: return
+    preOrderBinaryTree(root.left)
+    preOrderBinaryTree(root.right)
+    Log.e("luzheng", "preOrderRecursive: $root" )
 }
