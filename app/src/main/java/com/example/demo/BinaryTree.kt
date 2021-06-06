@@ -4,7 +4,11 @@ import android.util.Log
 import java.util.*
 
 fun main() {
-
+    postOrderNoRecursive(TreeNode(1).apply {
+        left = null;right = TreeNode(2).apply {
+        left = TreeNode(3)
+    }
+    })
 }
 
 /**
@@ -43,7 +47,7 @@ fun maxDepth(root: TreeNode?): Int {
     var ans = 0
     while (!queue.isEmpty()) {
         val size = queue.size
-        if(size > 0 ) ans++
+        if (size > 0) ans++
         for (i in 0 until size) {
             val cur = queue.poll()
             cur ?: return ans
@@ -54,23 +58,83 @@ fun maxDepth(root: TreeNode?): Int {
     return ans
 }
 
-fun preOrderRecursive(root: TreeNode?){
+fun preOrderRecursive(root: TreeNode?) {
     root ?: return
-    Log.e("luzheng", "preOrderRecursive: $root" )
+    Log.e("luzheng", "preOrderRecursive: $root")
     preOrderBinaryTree(root.left)
     preOrderBinaryTree(root.right)
 }
 
-fun inOrderRecursive(root: TreeNode?){
+fun preOrderNoRecursive(root: TreeNode?) {
+    root ?: return
+    val stack = Stack<TreeNode>()
+    var cur: TreeNode? = root
+    stack.push(root)
+    while (cur != null || !stack.isEmpty()) {
+        while (cur != null) {
+            Log.e("luzheng", "preOrderNoRecursive: $cur")
+            stack.push(cur)
+            cur = cur.left
+        }
+        if(!stack.isEmpty()){
+            cur = stack.pop()
+            cur = cur.right
+        }
+    }
+}
+
+fun inOrderRecursive(root: TreeNode?) {
     root ?: return
     preOrderBinaryTree(root.left)
-    Log.e("luzheng", "preOrderRecursive: $root" )
+    Log.e("luzheng", "preOrderRecursive: $root")
     preOrderBinaryTree(root.right)
 }
 
-fun postOrderRecursive(root: TreeNode?){
+fun inOrderNoRecursive(root: TreeNode?) {
+    root ?: return
+    val stack = Stack<TreeNode>()
+    var cur: TreeNode? = root
+    stack.push(root)
+    while (cur != null || !stack.isEmpty()) {
+        while (cur != null) {
+            stack.push(cur)
+            cur = cur.left
+        }
+        if(!stack.isEmpty()) {
+            cur = stack.pop()
+            Log.e("luzheng", "preOrderNoRecursive: $cur")
+            cur = cur.right
+        }
+    }
+}
+
+fun postOrderRecursive(root: TreeNode?) {
     root ?: return
     preOrderBinaryTree(root.left)
     preOrderBinaryTree(root.right)
-    Log.e("luzheng", "preOrderRecursive: $root" )
+    Log.e("luzheng", "preOrderRecursive: $root")
+}
+
+fun postOrderNoRecursive(root: TreeNode?) {
+    root ?: return
+    val stack = Stack<TreeNode>()
+    var cur: TreeNode? = root
+    var pre : TreeNode? = null
+    while (cur != null || !stack.isEmpty()) {
+        while (cur != null) {
+            stack.push(cur)
+            cur = cur.left
+        }
+        if(!stack.isEmpty()) {
+            cur = stack.pop()
+            if(cur.right == null || cur.right == pre){
+                print( "preOrderRecursive: $cur")
+                pre = cur
+                cur = null
+            } else {
+                stack.push(cur)
+                cur = cur.right
+            }
+        }
+    }
 }
