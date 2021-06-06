@@ -9,6 +9,31 @@ fun main() {
         left = TreeNode(3)
     }
     })
+    levelOrder(mockTreeNode(1,4,5,6,2,7))
+}
+
+fun mockTreeNode(vararg value: Int): TreeNode?{
+    return fillSubTree(0, value)
+}
+
+fun fillSubTree(index: Int, values: IntArray): TreeNode? {
+    val value = (if(index <= values.lastIndex) values[index] else null) ?: return null
+    val temp = TreeNode(value)
+    temp.left = fillSubTree(index * 2 + 1, values)
+    temp.right = fillSubTree(index * 2 + 2, values)
+    return temp
+}
+
+fun levelOrder(treeNode: TreeNode?){
+    treeNode ?: return
+    val queue = LinkedList<TreeNode>()
+    queue.offer(treeNode)
+    while (!queue.isEmpty()){
+        val node = queue.poll()
+        print("${node?.value} ")
+        if(node?.left != null) queue.offer(node.left)
+        if(node?.right != null) queue.offer(node.right)
+    }
 }
 
 /**
@@ -128,7 +153,7 @@ fun postOrderNoRecursive(root: TreeNode?) {
         if(!stack.isEmpty()) {
             cur = stack.pop()
             if(cur.right == null || cur.right == pre){
-                print( "preOrderRecursive: $cur")
+                print( "$cur ")
                 pre = cur
                 cur = null
             } else {
@@ -137,4 +162,23 @@ fun postOrderNoRecursive(root: TreeNode?) {
             }
         }
     }
+    println()
+}
+
+/**
+ * 输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 true，否则返回 false。假设输入的数组的任意两个数字都互不相同。
+ * 递归实现
+ */
+fun verifyPostorder(postorder: IntArray): Boolean {
+    if(postorder.isEmpty()) return true
+    return verifyBSTPostOrder(postorder[postorder.lastIndex], postorder)
+}
+
+fun verifyBSTPostOrder(rootIndex: Int, postorder: IntArray): Boolean {
+    if(rootIndex == 0) return true
+    if(!verifyBSTPostOrder(rootIndex - 1, postorder)) return false
+    if(!verifyBSTPostOrder(rootIndex - 2, postorder)) return false
+    if(postorder[rootIndex] > postorder[rootIndex - 1]) return  false
+    if(rootIndex >=2 && postorder[rootIndex] < postorder[rootIndex - 2]) return false
+    return true
 }
