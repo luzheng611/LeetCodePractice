@@ -3,6 +3,7 @@ package com.example.demo
 import android.util.Log
 import java.lang.Integer.min
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.max
 
 fun main() {
@@ -90,7 +91,9 @@ fun maxDepth(root: TreeNode?): Int {
 
 fun depth(root: TreeNode?): Int{
     if(root == null) return 0
-    return max(depth(root.left), depth(root.right)) + 1
+    val left = depth(root.left)//左子树的深度即递归次数
+    val right = depth(root.right)//右子树的深度即递归次数
+    return max(left, right) + 1//+1是加上根节点的深度
 }
 
 fun preOrderRecursive(root: TreeNode?) {
@@ -206,4 +209,28 @@ fun invertTree(root: TreeNode?): TreeNode? {
     invertTree(root.left)
     invertTree(root.right)
     return root
+}
+
+/**
+ * 判断是否是平衡二叉树
+ */
+fun isBalanced(root: TreeNode?): Boolean {
+    root ?: return  true
+    return abs(depth(root.left) - depth(root.right)) <= 1 && isBalanced(root.left) && isBalanced(root.right)
+}
+
+/**
+ * 自底向顶的后序遍历深度，避免很多重复计算
+ */
+fun isBalanced2(root: TreeNode?): Boolean{
+    return dfs(root) != -1
+}
+
+fun dfs(root: TreeNode?): Int{
+    root ?: return 0
+    val left = dfs(root.left)
+    if(left == -1) return -1
+    val right = dfs(root.right)
+    if(right == -1) return -1
+    return if(Math.abs(left - right) <= 1) Math.max(left, right) else -1
 }
