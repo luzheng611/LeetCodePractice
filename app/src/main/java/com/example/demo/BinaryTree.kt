@@ -3,6 +3,7 @@ package com.example.demo
 import android.util.Log
 import java.lang.Integer.min
 import java.util.*
+import kotlin.math.max
 
 fun main() {
     postOrderNoRecursive(TreeNode(1).apply {
@@ -11,6 +12,7 @@ fun main() {
     }
     })
     postOrderNoRecursive(mockTreeNode(5, 2, 6, 1, 3, 4))
+    println(depth(mockTreeNode(5,2,6,1,3,4,5,6)))
 }
 
 fun mockTreeNode(vararg value: Int): TreeNode? {
@@ -86,6 +88,11 @@ fun maxDepth(root: TreeNode?): Int {
     return ans
 }
 
+fun depth(root: TreeNode?): Int{
+    if(root == null) return 0
+    return max(depth(root.left), depth(root.right)) + 1
+}
+
 fun preOrderRecursive(root: TreeNode?) {
     root ?: return
     Log.e("luzheng", "preOrderRecursive: $root")
@@ -97,7 +104,6 @@ fun preOrderNoRecursive(root: TreeNode?) {
     root ?: return
     val stack = Stack<TreeNode>()
     var cur: TreeNode? = root
-    stack.push(root)
     while (cur != null || !stack.isEmpty()) {
         while (cur != null) {
             Log.e("luzheng", "preOrderNoRecursive: $cur")
@@ -122,7 +128,6 @@ fun inOrderNoRecursive(root: TreeNode?) {
     root ?: return
     val stack = Stack<TreeNode>()
     var cur: TreeNode? = root
-    stack.push(root)
     while (cur != null || !stack.isEmpty()) {
         while (cur != null) {
             stack.push(cur)
@@ -188,4 +193,17 @@ fun verifyBSTPostOrder(postorder: IntArray, leftIndex: Int, rightIndex: Int): Bo
         right++
     }
     return right == rightIndex && verifyBSTPostOrder(postorder, leftIndex, left - 1) && verifyBSTPostOrder(postorder, left  , rightIndex - 1)
+}
+
+/**
+ * 翻转二叉树
+ */
+fun invertTree(root: TreeNode?): TreeNode? {
+    root ?: return null
+    val tempRight = root.right
+    root.right = root.left
+    root.left = tempRight
+    invertTree(root.left)
+    invertTree(root.right)
+    return root
 }
