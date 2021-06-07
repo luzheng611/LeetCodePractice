@@ -1,6 +1,7 @@
 package com.example.demo
 
 import android.util.Log
+import java.lang.Integer.min
 import java.util.*
 
 fun main() {
@@ -9,31 +10,33 @@ fun main() {
         left = TreeNode(3)
     }
     })
-    levelOrder(mockTreeNode(1,4,5,6,2,7))
+    postOrderNoRecursive(mockTreeNode(5, 2, 6, 1, 3, 4))
 }
 
-fun mockTreeNode(vararg value: Int): TreeNode?{
+fun mockTreeNode(vararg value: Int): TreeNode? {
     return fillSubTree(0, value)
 }
 
-fun fillSubTree(index: Int, values: IntArray): TreeNode? {
-    val value = (if(index <= values.lastIndex) values[index] else null) ?: return null
+fun fillSubTree(index: Int, levelOrderArray: IntArray): TreeNode? {
+    val value =
+        (if (index <= levelOrderArray.lastIndex) levelOrderArray[index] else null) ?: return null
     val temp = TreeNode(value)
-    temp.left = fillSubTree(index * 2 + 1, values)
-    temp.right = fillSubTree(index * 2 + 2, values)
+    temp.left = fillSubTree(index * 2 + 1, levelOrderArray)
+    temp.right = fillSubTree(index * 2 + 2, levelOrderArray)
     return temp
 }
 
-fun levelOrder(treeNode: TreeNode?){
+fun levelOrder(treeNode: TreeNode?) {
     treeNode ?: return
     val queue = LinkedList<TreeNode>()
     queue.offer(treeNode)
-    while (!queue.isEmpty()){
+    while (!queue.isEmpty()) {
         val node = queue.poll()
         print("${node?.value} ")
-        if(node?.left != null) queue.offer(node.left)
-        if(node?.right != null) queue.offer(node.right)
+        if (node?.left != null) queue.offer(node.left)
+        if (node?.right != null) queue.offer(node.right)
     }
+    println()
 }
 
 /**
@@ -101,7 +104,7 @@ fun preOrderNoRecursive(root: TreeNode?) {
             stack.push(cur)
             cur = cur.left
         }
-        if(!stack.isEmpty()){
+        if (!stack.isEmpty()) {
             cur = stack.pop()
             cur = cur.right
         }
@@ -125,7 +128,7 @@ fun inOrderNoRecursive(root: TreeNode?) {
             stack.push(cur)
             cur = cur.left
         }
-        if(!stack.isEmpty()) {
+        if (!stack.isEmpty()) {
             cur = stack.pop()
             Log.e("luzheng", "preOrderNoRecursive: $cur")
             cur = cur.right
@@ -144,16 +147,16 @@ fun postOrderNoRecursive(root: TreeNode?) {
     root ?: return
     val stack = Stack<TreeNode>()
     var cur: TreeNode? = root
-    var pre : TreeNode? = null
+    var pre: TreeNode? = null
     while (cur != null || !stack.isEmpty()) {
         while (cur != null) {
             stack.push(cur)
             cur = cur.left
         }
-        if(!stack.isEmpty()) {
+        if (!stack.isEmpty()) {
             cur = stack.pop()
-            if(cur.right == null || cur.right == pre){
-                print( "$cur ")
+            if (cur.right == null || cur.right == pre) {
+                print("$cur ")
                 pre = cur
                 cur = null
             } else {
@@ -170,15 +173,19 @@ fun postOrderNoRecursive(root: TreeNode?) {
  * 递归实现
  */
 fun verifyPostorder(postorder: IntArray): Boolean {
-    if(postorder.isEmpty()) return true
-    return verifyBSTPostOrder(postorder[postorder.lastIndex], postorder)
+    return verifyBSTPostOrder(postorder, 0, postorder.size - 1)
 }
 
-fun verifyBSTPostOrder(rootIndex: Int, postorder: IntArray): Boolean {
-    if(rootIndex == 0) return true
-    if(!verifyBSTPostOrder(rootIndex - 1, postorder)) return false
-    if(!verifyBSTPostOrder(rootIndex - 2, postorder)) return false
-    if(postorder[rootIndex] > postorder[rootIndex - 1]) return  false
-    if(rootIndex >=2 && postorder[rootIndex] < postorder[rootIndex - 2]) return false
-    return true
+fun verifyBSTPostOrder(postorder: IntArray, leftIndex: Int, rightIndex: Int): Boolean {
+    if (leftIndex >= rightIndex) return true
+
+    var left = leftIndex
+    while (postorder[left] < postorder[rightIndex]) {
+        left++
+    }
+    var right = left
+    while (postorder[right] > postorder[rightIndex]) {
+        right++
+    }
+    return right == rightIndex && verifyBSTPostOrder(postorder, leftIndex, left - 1) && verifyBSTPostOrder(postorder, left  , rightIndex - 1)
 }
