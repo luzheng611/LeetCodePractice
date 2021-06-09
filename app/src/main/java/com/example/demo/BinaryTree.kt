@@ -281,3 +281,14 @@ fun lowestCommonAncestor(root: TreeNode?, p: TreeNode?, q: TreeNode?): TreeNode?
     val right = lowestCommonAncestor(root.right, p , q)
     return if(left == null) right else if(right == null) left else root
 }
+
+/**
+ * 如果二叉树每个节点都具有相同的值，那么该二叉树就是单值二叉树。
+ * 只有给定的树是单值二叉树时，才返回 true；否则返回 false。
+ */
+fun isUnivalTree(root: TreeNode?): Boolean {
+    root ?: return true
+    if(root.right != null && root.value != root.right?.value) return false
+    if(root.left != null && root.value != root.left?.value) return false
+    return isUnivalTree(root.left) && isUnivalTree(root.right)
+}
