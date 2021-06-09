@@ -2,6 +2,7 @@ package com.example.demo
 
 import android.util.Log
 import java.lang.Integer.min
+import java.sql.Array
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
@@ -13,7 +14,7 @@ fun main() {
     }
     })
     postOrderNoRecursive(mockTreeNode(5, 2, 6, 1, 3, 4))
-    println(depth(mockTreeNode(5,2,6,1,3,4,5,6)))
+    println(depth(mockTreeNode(5, 2, 6, 1, 3, 4, 5, 6)))
 }
 
 fun mockTreeNode(vararg value: Int): TreeNode? {
@@ -89,8 +90,8 @@ fun maxDepth(root: TreeNode?): Int {
     return ans
 }
 
-fun depth(root: TreeNode?): Int{
-    if(root == null) return 0
+fun depth(root: TreeNode?): Int {
+    if (root == null) return 0
     val left = depth(root.left)//左子树的深度即递归次数
     val right = depth(root.right)//右子树的深度即递归次数
     return max(left, right) + 1//+1是加上根节点的深度
@@ -195,7 +196,11 @@ fun verifyBSTPostOrder(postorder: IntArray, leftIndex: Int, rightIndex: Int): Bo
     while (postorder[right] > postorder[rightIndex]) {
         right++
     }
-    return right == rightIndex && verifyBSTPostOrder(postorder, leftIndex, left - 1) && verifyBSTPostOrder(postorder, left  , rightIndex - 1)
+    return right == rightIndex && verifyBSTPostOrder(
+        postorder,
+        leftIndex,
+        left - 1
+    ) && verifyBSTPostOrder(postorder, left, rightIndex - 1)
 }
 
 /**
@@ -215,22 +220,46 @@ fun invertTree(root: TreeNode?): TreeNode? {
  * 判断是否是平衡二叉树
  */
 fun isBalanced(root: TreeNode?): Boolean {
-    root ?: return  true
-    return abs(depth(root.left) - depth(root.right)) <= 1 && isBalanced(root.left) && isBalanced(root.right)
+    root ?: return true
+    return abs(depth(root.left) - depth(root.right)) <= 1 && isBalanced(root.left) && isBalanced(
+        root.right
+    )
 }
 
 /**
  * 自底向顶的后序遍历深度，避免很多重复计算
  */
-fun isBalanced2(root: TreeNode?): Boolean{
+fun isBalanced2(root: TreeNode?): Boolean {
     return dfs(root) != -1
 }
 
-fun dfs(root: TreeNode?): Int{
+fun dfs(root: TreeNode?): Int {
     root ?: return 0
     val left = dfs(root.left)
-    if(left == -1) return -1
+    if (left == -1) return -1
     val right = dfs(root.right)
-    if(right == -1) return -1
-    return if(Math.abs(left - right) <= 1) Math.max(left, right) else -1
+    if (right == -1) return -1
+    return if (Math.abs(left - right) <= 1) Math.max(left, right) else -1
+}
+
+/**
+ * 给定一棵二叉搜索树，请找出其中第k大的节点。
+ * 二叉搜索树从大到小遍历即 右 根 左
+ */
+fun kthLargest(root: TreeNode?, k: Int): Int {
+    var ans: TreeNode? = null
+    var index = k
+    fun inOrderBST(root: TreeNode?) {
+        root ?: return
+        if(ans != null) return
+        inOrderBST(root.right)
+        if (--index == 0) {
+            ans = root
+            return
+        }
+        inOrderBST(root.left)
+    }
+    root ?: return 0
+    inOrderBST(root)
+    return ans?.value ?: 0
 }
