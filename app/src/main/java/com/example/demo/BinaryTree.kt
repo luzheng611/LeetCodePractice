@@ -15,6 +15,7 @@ fun main() {
     })
     postOrderNoRecursive(mockTreeNode(5, 2, 6, 1, 3, 4))
     println(depth(mockTreeNode(5, 2, 6, 1, 3, 4, 5, 6)))
+    println(findTilt(mockTreeNode(21,7,14,1,1,2,2,3,3)))
 }
 
 fun mockTreeNode(vararg value: Int): TreeNode? {
@@ -291,4 +292,24 @@ fun isUnivalTree(root: TreeNode?): Boolean {
     if(root.right != null && root.value != root.right?.value) return false
     if(root.left != null && root.value != root.left?.value) return false
     return isUnivalTree(root.left) && isUnivalTree(root.right)
+}
+
+/**
+ * 给定一个二叉树，计算 整个树 的坡度 。
+ * 一个树的 节点的坡度 定义即为，该节点左子树的节点之和和右子树节点之和的 差的绝对值 。如果没有左子树的话，左子树的节点之和为 0 ；没有右子树的话也是一样。空结点的坡度是 0 。
+ * 整个树 的坡度就是其所有节点的坡度之和。
+ *
+ * 思路： 后序遍历左右子树，返回左右子树的节点数之和，在返回之前结算左右数节点和的绝对差值后更新结果
+ */
+fun findTilt(root: TreeNode?): Int {
+    var tilt = 0
+    fun findTiltInternal(root: TreeNode?): Int {
+        root ?: return 0
+        val left = findTiltInternal(root.left)
+        val right = findTiltInternal(root.right)
+        tilt += Math.abs(left - right)
+        return left + right + root.value
+    }
+    findTiltInternal(root)
+    return tilt
 }
