@@ -263,3 +263,21 @@ fun kthLargest(root: TreeNode?, k: Int): Int {
     inOrderBST(root)
     return ans?.value ?: 0
 }
+
+/**
+ * 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。 p 和 q
+ * 最简解法：递归后序遍历左右子树，保证在p和q都被找到时可以返回他们深度最深的第一个根节点；
+ * 如果左树命中p或q则返回，如果此时右树为空，则向上返回左树命中的节点
+ * 如果左树命中p或q则返回，如果此时右树不为空，则向上返回右树命中的节点
+ * 如果左树右树都命中，则返回当前root节点即为最近公共祖先
+ * 如果左树和右树都没命中则返回树的根节点
+ *
+ * l、r 非空时，说明 p、q 分居 root 的两侧，root 就是 LCA
+ * l、r 任一为空，说明 LCA 位于另一子树或其祖先中
+ */
+fun lowestCommonAncestor(root: TreeNode?, p: TreeNode?, q: TreeNode?): TreeNode?{
+    if(root == null || p == root || q == root) return root
+    val left = lowestCommonAncestor(root.left, p ,q)
+    val right = lowestCommonAncestor(root.right, p , q)
+    return if(left == null) right else if(right == null) left else root
+}
