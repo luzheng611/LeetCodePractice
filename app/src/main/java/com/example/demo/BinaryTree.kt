@@ -1,8 +1,6 @@
 package com.example.demo
 
 import android.util.Log
-import java.lang.Integer.min
-import java.sql.Array
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
@@ -15,19 +13,24 @@ fun main() {
     })
     postOrderNoRecursive(mockTreeNode(5, 2, 6, 1, 3, 4))
     println(depth(mockTreeNode(5, 2, 6, 1, 3, 4, 5, 6)))
-    println(findTilt(mockTreeNode(21,7,14,1,1,2,2,3,3)))
+    println(findTilt(mockTreeNode(21, 7, 14, 1, 1, 2, 2, 3, 3)))
+    println(isSymmetric(mockTreeNode(1,2,2,3,4,4,3)))
 }
 
-fun mockTreeNode(vararg value: Int): TreeNode? {
-    return fillSubTree(0, value)
+fun mockTreeNode(vararg value: Int?): TreeNode? {
+    return fillBalanceBinaryTree(0, value)
 }
 
-fun fillSubTree(index: Int, levelOrderArray: IntArray): TreeNode? {
-    val value =
-        (if (index <= levelOrderArray.lastIndex) levelOrderArray[index] else null) ?: return null
-    val temp = TreeNode(value)
-    temp.left = fillSubTree(index * 2 + 1, levelOrderArray)
-    temp.right = fillSubTree(index * 2 + 2, levelOrderArray)
+fun fillBalanceBinaryTree(index: Int, levelOrderArray: Array<out Int?>): TreeNode? {
+    val value = (if (index <= levelOrderArray.lastIndex) levelOrderArray[index] else null)
+    val temp: TreeNode?
+    if (value == null) {
+        temp = null
+    } else {
+        temp = TreeNode(value)
+        temp.left = fillBalanceBinaryTree(index * 2 + 1, levelOrderArray)
+        temp.right = fillBalanceBinaryTree(index * 2 + 2, levelOrderArray)
+    }
     return temp
 }
 
@@ -252,7 +255,7 @@ fun kthLargest(root: TreeNode?, k: Int): Int {
     var index = k
     fun inOrderBST(root: TreeNode?) {
         root ?: return
-        if(ans != null) return
+        if (ans != null) return
         inOrderBST(root.right)
         if (--index == 0) {
             ans = root
@@ -276,11 +279,11 @@ fun kthLargest(root: TreeNode?, k: Int): Int {
  * l、r 非空时，说明 p、q 分居 root 的两侧，root 就是 LCA
  * l、r 任一为空，说明 LCA 位于另一子树或其祖先中
  */
-fun lowestCommonAncestor(root: TreeNode?, p: TreeNode?, q: TreeNode?): TreeNode?{
-    if(root == null || p == root || q == root) return root
-    val left = lowestCommonAncestor(root.left, p ,q)
-    val right = lowestCommonAncestor(root.right, p , q)
-    return if(left == null) right else if(right == null) left else root
+fun lowestCommonAncestor(root: TreeNode?, p: TreeNode?, q: TreeNode?): TreeNode? {
+    if (root == null || p == root || q == root) return root
+    val left = lowestCommonAncestor(root.left, p, q)
+    val right = lowestCommonAncestor(root.right, p, q)
+    return if (left == null) right else if (right == null) left else root
 }
 
 /**
@@ -289,8 +292,8 @@ fun lowestCommonAncestor(root: TreeNode?, p: TreeNode?, q: TreeNode?): TreeNode?
  */
 fun isUnivalTree(root: TreeNode?): Boolean {
     root ?: return true
-    if(root.right != null && root.value != root.right?.value) return false
-    if(root.left != null && root.value != root.left?.value) return false
+    if (root.right != null && root.value != root.right?.value) return false
+    if (root.left != null && root.value != root.left?.value) return false
     return isUnivalTree(root.left) && isUnivalTree(root.right)
 }
 
@@ -313,3 +316,18 @@ fun findTilt(root: TreeNode?): Int {
     findTiltInternal(root)
     return tilt
 }
+
+/**
+ * 请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。
+ */
+fun isSymmetric(root: TreeNode?): Boolean {
+    root ?: return true
+    fun recur(left:TreeNode?, right:TreeNode?): Boolean{
+        if(left == null && right == null) return true
+        if(left == null || right == null || left.value != right.value) return false
+        return recur(left.left,right.right) && recur(right.left, left?.right)
+    }
+    return recur(root.left, root.right)
+}
+
+
